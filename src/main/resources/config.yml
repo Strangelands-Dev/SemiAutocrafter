@@ -1,0 +1,7 @@
+Recipes:
+  'Example1':
+    Input:
+      - STONE,2
+      - STICK,3
+    Output: COBBLESTONE
+    Amount: 2

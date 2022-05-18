@@ -12,19 +12,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 
 
-public class AutocrafterRecipe {
+public class AutocrafterCraftingRecipe {
     private SemiAutoCrafter plugin;
     final ItemStack autocrafter = new ItemStack(Material.DROPPER, 1);
     final ItemMeta autocrafterMeta = autocrafter.getItemMeta();
     private Recipe autocraft;
 
-    public AutocrafterRecipe(SemiAutoCrafter plugin) {
+    public AutocrafterCraftingRecipe(SemiAutoCrafter plugin) {
         this.plugin = plugin;
         craftRecipe();
     }
 
     public void craftRecipe(){
-        autocrafterMeta.setDisplayName(ChatColor.GOLD + "Autocrafter");
+        autocrafterMeta.setDisplayName(ChatColor.GOLD + "Semi-autocrafter");
         autocrafterMeta.addEnchant(Enchantment.ARROW_INFINITE, 2 ,true);
         autocrafterMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         autocrafter.setItemMeta(autocrafterMeta);
