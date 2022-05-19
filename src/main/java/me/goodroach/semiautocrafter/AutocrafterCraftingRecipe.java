@@ -16,7 +16,6 @@ public class AutocrafterCraftingRecipe {
     private SemiAutoCrafter plugin;
     final ItemStack autocrafter = new ItemStack(Material.DROPPER, 1);
     final ItemMeta autocrafterMeta = autocrafter.getItemMeta();
-    private Recipe autocraft;
 
     public AutocrafterCraftingRecipe(SemiAutoCrafter plugin) {
         this.plugin = plugin;
@@ -29,7 +28,7 @@ public class AutocrafterCraftingRecipe {
         autocrafterMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         autocrafter.setItemMeta(autocrafterMeta);
 
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, "autocrafter"), autocrafter);
+        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, "semiautocrafter"), autocrafter);
         recipe.shape("XYX","ZWZ","XYX");
         recipe.setIngredient('X',Material.SMOOTH_STONE);
         recipe.setIngredient('Y',Material.PISTON);

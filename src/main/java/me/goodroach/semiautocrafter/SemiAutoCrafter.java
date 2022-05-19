@@ -1,17 +1,21 @@
 package me.goodroach.semiautocrafter;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public final class SemiAutoCrafter extends JavaPlugin {
 
     public static SemiAutoCrafter instance;
-    public static HashMap<String, AutocraftRecipe> Recipes = new HashMap<>();
+    public static HashMap<String, AutocraftRecipe> recipes = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -41,11 +45,45 @@ public final class SemiAutoCrafter extends JavaPlugin {
             HashMap<Material,Integer> input = new HashMap<>();
             for(String y : l){
                 String[] a = y.split(",");
-                input.put(Material.getMaterial(a[0].toUpperCase()),Integer.parseInt(a[1]));
+                input.put(Material.getMaterial(a[0].toUpperCase(Locale.ENGLISH)),Integer.parseInt(a[1]));
             }
-            AutocraftRecipe recipe = new AutocraftRecipe(x,input,output,amount);
-            Recipes.put(x.toLowerCase(Locale.ENGLISH), recipe);
+            AutocraftRecipe recipe = new AutocraftRecipe(input,output,amount);
+            recipes.put(x.toUpperCase(Locale.ENGLISH), recipe);
             System.out.println("The plugin has successfully registered a recipe.");
+        }
+        //Gets the server's crafting recipes.
+        Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
+        Recipe r;
+        while (it.hasNext()){
+            r = it.next();
+            String name = r.getResult().getType().toString();
+            if(recipes.containsKey(name)) continue;
+            if(r.getResult().containsEnchantment(Enchantment.ARROW_INFINITE)) continue;
+            if(r instanceof ShapedRecipe){
+                Material output = r.getResult().getType();
+                int amount = r.getResult().getAmount();
+                HashMap<Material, Integer> input = new HashMap<>();
+                for(ItemStack i : ((ShapedRecipe) r).getIngredientMap().values()){
+                    if(i == null) continue;
+                    Material m = i.getType();
+                    input.put(m, input.getOrDefault(m, 0)+1);
+                }
+                AutocraftRecipe recipe = new AutocraftRecipe(input,output,amount);
+                recipes.put(name, recipe);
+                System.out.println("Recipe: " + name + " added.");
+            }
+            if(r instanceof ShapelessRecipe){
+                Material output = r.getResult().getType();
+                int amount = r.getResult().getAmount();
+                HashMap<Material, Integer> input = new HashMap<>();
+                for(ItemStack i : ((ShapelessRecipe) r).getIngredientList()){
+                    Material m = i.getType();
+                    input.put(m, input.getOrDefault(m, 0)+1);
+                }
+                AutocraftRecipe recipe = new AutocraftRecipe(input,output,amount);
+                recipes.put(name, recipe);
+                System.out.println("Recipe: " + name + " added.");
+            }
         }
     }
 }
