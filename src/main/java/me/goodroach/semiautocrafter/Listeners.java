@@ -17,9 +17,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Iterator;
 import java.util.Locale;
 
-public class Listeners implements Listener{
+public class Listeners implements Listener {
     private NamespacedKey key1 = new NamespacedKey(SemiAutoCrafter.getPlugin(SemiAutoCrafter.class), "autocrafter");
     private NamespacedKey key2 = new NamespacedKey(SemiAutoCrafter.getPlugin(SemiAutoCrafter.class), "output");
     private final AutocrafterCraftingRecipe autocrafterRecipe;
@@ -33,6 +34,7 @@ public class Listeners implements Listener{
     public void onPlace(BlockPlaceEvent event) {
         if (!event.getItemInHand().getItemMeta().equals(autocrafterRecipe.getItem().getItemMeta())) return;
         if (!(event.getBlock().getState() instanceof TileState)) return;
+
         TileState state = (TileState) event.getBlock().getState();
         PersistentDataContainer container = state.getPersistentDataContainer();
 
@@ -46,8 +48,9 @@ public class Listeners implements Listener{
         event.getPlayer().sendMessage(ChatColor.YELLOW +
                 "Place a sign with the item's name to assign what the autocrafter should make and right click it.");
     }
+
     @EventHandler
-    public void onBreakSign(BlockBreakEvent event){
+    public void onBreakSign(BlockBreakEvent event) {
         Block b = event.getBlock();
         if (!(b.getBlockData() instanceof WallSign)) return;
 
@@ -57,12 +60,13 @@ public class Listeners implements Listener{
         TileState state = (TileState) dropper.getState();
         PersistentDataContainer container = state.getPersistentDataContainer();
 
-        if(container.has(key2, PersistentDataType.STRING)){
+        if (container.has(key2, PersistentDataType.STRING)) {
             dropper.setType(Material.AIR);
             event.getPlayer().sendMessage(ChatColor.YELLOW + "You broke the autocrafter.");
             return;
         }
     }
+
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         if (event.getPlayer().getGameMode() != GameMode.SURVIVAL) return;
@@ -70,13 +74,13 @@ public class Listeners implements Listener{
         TileState state = (TileState) event.getBlock().getState();
         PersistentDataContainer container = state.getPersistentDataContainer();
         Block b = event.getBlock();
-        if (container.has(key2, PersistentDataType.STRING)){
+        if (container.has(key2, PersistentDataType.STRING)) {
             event.setCancelled(true);
             b.setType(Material.AIR);
             event.getPlayer().sendMessage(ChatColor.YELLOW + "You broke the autocrafter.");
             return;
         }
-        if (container.has(key1, PersistentDataType.STRING)){
+        if (container.has(key1, PersistentDataType.STRING)) {
             event.setCancelled(true);
             b.setType(Material.AIR);
             b.getWorld().dropItem(b.getLocation(), autocrafterRecipe.getItem().clone());
@@ -93,7 +97,7 @@ public class Listeners implements Listener{
         org.bukkit.material.Directional signData = (org.bukkit.material.Directional) b.getState().getData();
         String assignedName = s.getLine(0).toLowerCase(Locale.ENGLISH);
 
-        if(SemiAutoCrafter.Recipes.get(assignedName) == null){
+        if (SemiAutoCrafter.Recipes.get(assignedName) == null) {
             event.getPlayer().sendMessage(ChatColor.YELLOW + "Invalid Name!");
             event.setCancelled(true);
             return;
@@ -102,9 +106,9 @@ public class Listeners implements Listener{
         Block dropper = b.getRelative(signData.getFacing().getOppositeFace());
         TileState state = (TileState) dropper.getState();
         PersistentDataContainer container = state.getPersistentDataContainer();
-        if(!container.has(key1, PersistentDataType.STRING)) return;
+        if (!container.has(key1, PersistentDataType.STRING)) return;
 
-        if(container.has(key2, PersistentDataType.STRING)){
+        if (container.has(key2, PersistentDataType.STRING)) {
             event.getPlayer().sendMessage(ChatColor.YELLOW + "You've already assigned this autocrafter.");
             event.setCancelled(true);
             return;
@@ -130,6 +134,20 @@ public class Listeners implements Listener{
         int recipeCheck = recipe.input.size();
         int correctRecipes = 0;
         ItemStack input;
+
+        Iterator<Material> inputIterator = recipe.getInput().keySet().stream().iterator();
+
+        while (inputIterator.hasNext()) {
+            Material m = inputIterator.next();
+            ItemStack inputStack = new ItemStack(m, recipe.getInput().get(m));
+            if (event.getSource().contains(m, recipe.getInput().get(m))) {
+
+                System.out.println("Checks out.");
+                event.getSource().removeItem(inputStack);
+                correctRecipes++;
+            }
+        }
+        /*
         for(Material m : recipe.getInput().keySet()){
             input = new ItemStack(m,recipe.getInput().get(m));
 
@@ -139,15 +157,56 @@ public class Listeners implements Listener{
                 correctRecipes++;
             }
         }
+
+         */
         //debug
         System.out.println(correctRecipes);
         System.out.println(recipeCheck);
 
-        if(correctRecipes != recipeCheck) {
+        if (correctRecipes != recipeCheck) {
             event.setCancelled(true);
             return;
         }
         ItemStack output = new ItemStack(recipe.getOutput(), recipe.getAmount());
         event.setItem(output);
+    }
+
+    private boolean removeItem(Inventory inv, ItemStack stack) {
+        int amount = stack.getAmount();
+        int inventoryAmount = getInvItemCount(inv, stack);
+
+        if (inventoryAmount < amount) return false;
+
+
+        return true;
+
+    }
+
+    private int removeStack(Inventory inventory, ItemStack item, int amount) {
+        for (ItemStack m : inventory.getStorageContents()) {
+            if (m.isSimilar(item)) {
+                if (m.getAmount() >= amount) {
+                    int diff = m.getAmount() - amount;
+                    m.setAmount(diff);
+                    return 0
+                }
+
+                if (m.getAmount() < amount) {
+                    int size = m.getAmount();
+                    m.setAmount(0);
+                    return amount - size;
+                }
+            }
+        }
+    }
+
+    private int getInvItemCount(Inventory inventory, ItemStack item) {
+        int count = 0;
+        for (ItemStack m : inventory.getStorageContents()) {
+            if (m.isSimilar(item)) {
+                count += m.getAmount();
+            }
+        }
+        return count;
     }
 }
