@@ -29,6 +29,8 @@ public class Listeners implements Listener {
         this.autocrafterRecipe = autocrafterRecipe;
     }
 
+    private InventoryUtilities invUtils = new InventoryUtilities();
+
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
@@ -134,31 +136,16 @@ public class Listeners implements Listener {
         int recipeCheck = recipe.input.size();
         int correctRecipes = 0;
         ItemStack input;
-
-        Iterator<Material> inputIterator = recipe.getInput().keySet().stream().iterator();
-
-        while (inputIterator.hasNext()) {
-            Material m = inputIterator.next();
-            ItemStack inputStack = new ItemStack(m, recipe.getInput().get(m));
-            if (event.getSource().contains(m, recipe.getInput().get(m))) {
-
-                System.out.println("Checks out.");
-                event.getSource().removeItem(inputStack);
-                correctRecipes++;
-            }
-        }
-        /*
         for(Material m : recipe.getInput().keySet()){
             input = new ItemStack(m,recipe.getInput().get(m));
 
             if(event.getSource().contains(m, recipe.getInput().get(m))) {
                 System.out.println("Checks out.");
-                event.getSource().removeItem(input);
+                invUtils.removeItems(event.getSource(), input, input.getAmount());
                 correctRecipes++;
             }
         }
 
-         */
         //debug
         System.out.println(correctRecipes);
         System.out.println(recipeCheck);
@@ -171,42 +158,4 @@ public class Listeners implements Listener {
         event.setItem(output);
     }
 
-    private boolean removeItem(Inventory inv, ItemStack stack) {
-        int amount = stack.getAmount();
-        int inventoryAmount = getInvItemCount(inv, stack);
-
-        if (inventoryAmount < amount) return false;
-
-
-        return true;
-
-    }
-
-    private int removeStack(Inventory inventory, ItemStack item, int amount) {
-        for (ItemStack m : inventory.getStorageContents()) {
-            if (m.isSimilar(item)) {
-                if (m.getAmount() >= amount) {
-                    int diff = m.getAmount() - amount;
-                    m.setAmount(diff);
-                    return 0
-                }
-
-                if (m.getAmount() < amount) {
-                    int size = m.getAmount();
-                    m.setAmount(0);
-                    return amount - size;
-                }
-            }
-        }
-    }
-
-    private int getInvItemCount(Inventory inventory, ItemStack item) {
-        int count = 0;
-        for (ItemStack m : inventory.getStorageContents()) {
-            if (m.isSimilar(item)) {
-                count += m.getAmount();
-            }
-        }
-        return count;
-    }
 }
