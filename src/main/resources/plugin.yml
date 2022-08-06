@@ -1,6 +1,6 @@
 name: SemiAutoCrafter
-version: '${project.version}'
+version: '1.0.1'
 main: me.goodroach.semiautocrafter.SemiAutoCrafter
 api-version: 1.16
-authors: [ goodroach ]
+authors: [ goodroach, SirVentox ]
 description: Adds a semi-auto crafter, which requires a redstone output to craft items. 
