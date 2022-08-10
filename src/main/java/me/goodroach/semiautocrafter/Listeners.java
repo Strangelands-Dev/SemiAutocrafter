@@ -152,8 +152,8 @@ public class Listeners implements Listener {
         }
 
         //debug
-        System.out.println(correctRecipes);
-        System.out.println(recipeCheck);
+       // System.out.println(correctRecipes);
+      //  System.out.println(recipeCheck);
 
         if (correctRecipes != recipeCheck) {
             event.setCancelled(true);
