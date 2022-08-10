@@ -164,6 +164,7 @@ public class Listeners implements Listener {
             invUtils.removeItems(event.getSource(), Item, Item.getAmount());
         });
         ItemStack output = new ItemStack(recipe.getOutput(), recipe.getAmount());
+        event.getDestination().addItem(output);
         event.setItem(output);
     }
 
