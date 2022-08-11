@@ -136,7 +136,7 @@ public class Listeners implements Listener {
 
         int recipeCheck = recipe.input.size();
         int correctRecipes = 0;
-        System.out.println("Recipe input size: " + recipeCheck);
+      //  System.out.println("Recipe input size: " + recipeCheck);
         ItemStack input;
 
         ArrayList<ItemStack> removeAmount = new ArrayList<>();
@@ -144,10 +144,10 @@ public class Listeners implements Listener {
             input = new ItemStack(m,recipe.getInput().get(m));
 
             if(event.getSource().contains(m, recipe.getInput().get(m))) {
-                System.out.println("Checks out.");
+               // System.out.println("Checks out.");
                 correctRecipes++;
                 removeAmount.add(input);
-                System.out.println("size: " + correctRecipes);
+               // System.out.println("size: " + correctRecipes);
             }
         }
 
