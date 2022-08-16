@@ -29,9 +29,9 @@ public class AutocrafterCraftingRecipe {
         autocrafter.setItemMeta(autocrafterMeta);
 
         ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(plugin, "semiautocrafter"), autocrafter);
-        recipe.shape("XYX","ZWZ","XYX");
-        recipe.setIngredient('X',Material.SMOOTH_STONE);
-        recipe.setIngredient('Y',Material.PISTON);
+        recipe.shape("XXX","ZWZ","XYX");
+        recipe.setIngredient('X',Material.POLISHED_ANDESITE);
+        recipe.setIngredient('Y',Material.REDSTONE_BLOCK);
         recipe.setIngredient('Z',Material.EMERALD_BLOCK);
         recipe.setIngredient('W',Material.DISPENSER);
         plugin.getServer().addRecipe(recipe);

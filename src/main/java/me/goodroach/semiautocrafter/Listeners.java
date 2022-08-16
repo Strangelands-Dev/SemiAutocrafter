@@ -165,7 +165,6 @@ public class Listeners implements Listener {
         });
         ItemStack output = new ItemStack(recipe.getOutput());
         event.getDestination().addItem(output);
-        event.setItem(output);
     }
 
 }
