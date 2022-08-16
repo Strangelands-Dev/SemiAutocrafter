@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -99,7 +100,7 @@ public class Listeners implements Listener {
         org.bukkit.material.Directional signData = (org.bukkit.material.Directional) b.getState().getData();
         String assignedName = s.getLine(0).toLowerCase(Locale.ENGLISH);
 
-        if (SemiAutoCrafter.Recipes.get(assignedName) == null) {
+        if (SemiAutoCrafter.recipes.get(assignedName) == null) {
             event.getPlayer().sendMessage(ChatColor.YELLOW + "Invalid Name!");
             event.setCancelled(true);
             return;
@@ -131,30 +132,39 @@ public class Listeners implements Listener {
         if (!container.has(key1, PersistentDataType.STRING)) return;
         if (!container.has(key2, PersistentDataType.STRING)) return;
 
-        AutocraftRecipe recipe = SemiAutoCrafter.Recipes.get(container.get(key2, PersistentDataType.STRING));
+        AutocraftRecipe recipe = SemiAutoCrafter.recipes.get(container.get(key2, PersistentDataType.STRING));
 
         int recipeCheck = recipe.input.size();
         int correctRecipes = 0;
+      //  System.out.println("Recipe input size: " + recipeCheck);
         ItemStack input;
+
+        ArrayList<ItemStack> removeAmount = new ArrayList<>();
         for(Material m : recipe.getInput().keySet()){
             input = new ItemStack(m,recipe.getInput().get(m));
 
             if(event.getSource().contains(m, recipe.getInput().get(m))) {
-                System.out.println("Checks out.");
-                invUtils.removeItems(event.getSource(), input, input.getAmount());
+               // System.out.println("Checks out.");
                 correctRecipes++;
+                removeAmount.add(input);
+               // System.out.println("size: " + correctRecipes);
             }
         }
 
         //debug
-        System.out.println(correctRecipes);
-        System.out.println(recipeCheck);
+       // System.out.println(correctRecipes);
+      //  System.out.println(recipeCheck);
 
         if (correctRecipes != recipeCheck) {
             event.setCancelled(true);
             return;
         }
+
+        removeAmount.forEach(Item -> {
+            invUtils.removeItems(event.getSource(), Item, Item.getAmount());
+        });
         ItemStack output = new ItemStack(recipe.getOutput(), recipe.getAmount());
+        event.getDestination().addItem(output);
         event.setItem(output);
     }
 
