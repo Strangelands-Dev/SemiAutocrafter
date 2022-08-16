@@ -100,7 +100,7 @@ public class Listeners implements Listener {
         org.bukkit.material.Directional signData = (org.bukkit.material.Directional) b.getState().getData();
         String assignedName = s.getLine(0).toLowerCase(Locale.ENGLISH);
 
-        if (SemiAutoCrafter.recipes.get(assignedName) == null) {
+        if (SemiAutoCrafter.autocraftRecipeHashMap.get(assignedName) == null) {
             event.getPlayer().sendMessage(ChatColor.YELLOW + "Invalid Name!");
             event.setCancelled(true);
             return;
@@ -132,9 +132,9 @@ public class Listeners implements Listener {
         if (!container.has(key1, PersistentDataType.STRING)) return;
         if (!container.has(key2, PersistentDataType.STRING)) return;
 
-        AutocraftRecipe recipe = SemiAutoCrafter.recipes.get(container.get(key2, PersistentDataType.STRING));
+        AutocraftRecipe recipe = SemiAutoCrafter.autocraftRecipeHashMap.get(container.get(key2, PersistentDataType.STRING));
 
-        int recipeCheck = recipe.input.size();
+        int recipeCheck = recipe.getInput().size();
         int correctRecipes = 0;
       //  System.out.println("Recipe input size: " + recipeCheck);
         ItemStack input;
@@ -163,7 +163,7 @@ public class Listeners implements Listener {
         removeAmount.forEach(Item -> {
             invUtils.removeItems(event.getSource(), Item, Item.getAmount());
         });
-        ItemStack output = new ItemStack(recipe.getOutput(), recipe.getAmount());
+        ItemStack output = new ItemStack(recipe.getOutput());
         event.getDestination().addItem(output);
         event.setItem(output);
     }
