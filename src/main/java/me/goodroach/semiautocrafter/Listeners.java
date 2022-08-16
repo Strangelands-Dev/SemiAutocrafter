@@ -151,10 +151,6 @@ public class Listeners implements Listener {
             }
         }
 
-        //debug
-       // System.out.println(correctRecipes);
-      //  System.out.println(recipeCheck);
-
         if (correctRecipes != recipeCheck) {
             event.setCancelled(true);
             return;
@@ -163,8 +159,6 @@ public class Listeners implements Listener {
         removeAmount.forEach(Item -> {
             invUtils.removeItems(event.getSource(), Item, Item.getAmount());
         });
-        ItemStack output = new ItemStack(recipe.getOutput());
-        event.getDestination().addItem(output);
+        event.setItem(recipe.getOutput());
     }
-
 }

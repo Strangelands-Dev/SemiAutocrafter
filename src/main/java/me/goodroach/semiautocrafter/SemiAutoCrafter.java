@@ -50,7 +50,6 @@ public final class SemiAutoCrafter extends JavaPlugin {
             ItemStack output = new ItemStack(
                     Material.getMaterial(getConfig().getString(recipePath + ".Output").toUpperCase()),
                     getConfig().getInt(recipePath + ".Amount"));
-            System.out.println(output);
 
             AutocraftRecipe recipe = new AutocraftRecipe(input,output);
             autocraftRecipeHashMap.put(name.toLowerCase(Locale.ENGLISH), recipe);
